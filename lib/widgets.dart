@@ -190,7 +190,7 @@ class TeamBadge extends StatelessWidget {
       child: isUs
           ? Image.network(Config.logoUrl,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) =>
+              errorBuilder: (_, _, _) =>
                   const Text('PGS', style: TextStyle(fontWeight: FontWeight.w900)))
           : Text(teamInitials(team),
               style: TextStyle(

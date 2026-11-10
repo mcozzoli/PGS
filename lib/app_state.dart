@@ -113,8 +113,8 @@ class AppState extends ChangeNotifier {
         final st = await api.getMap('/stats');
         stats = st.map((gid, m) => MapEntry(
               gid,
-              (m as Map).map((num, s) => MapEntry(
-                    num.toString(),
+              (m as Map).map((pn, s) => MapEntry(
+                    pn.toString(),
                     Map<String, dynamic>.from(s),
                   )),
             ));
@@ -133,7 +133,7 @@ class AppState extends ChangeNotifier {
     stats = st.map((gid, m) => MapEntry(
           gid,
           (m as Map).map(
-              (num, s) => MapEntry(num.toString(), Map<String, dynamic>.from(s))),
+              (pn, s) => MapEntry(pn.toString(), Map<String, dynamic>.from(s))),
         ));
     notifyListeners();
   }

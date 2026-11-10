@@ -100,7 +100,7 @@ class _AppShellState extends State<AppShell> {
                 width: 32,
                 height: 32,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) =>
+                errorBuilder: (_, _, _) =>
                     const Icon(Icons.sports_basketball)),
           ),
           const SizedBox(width: 10),

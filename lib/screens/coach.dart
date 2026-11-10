@@ -161,10 +161,10 @@ class _CoachScreenState extends State<CoachScreen> {
                   items: [
                     const DropdownMenuItem<String?>(
                         value: null, child: Text('—')),
-                    ...conv.map((num) {
-                      final p = app.player(num);
+                    ...conv.map((n) {
+                      final p = app.player(n);
                       return DropdownMenuItem<String?>(
-                          value: num, child: Text('#$num ${p?.name ?? ''}'));
+                          value: n, child: Text('#$n ${p?.name ?? ''}'));
                     }),
                   ],
                   onChanged: (v) => setState(() {
@@ -197,16 +197,16 @@ class _CoachScreenState extends State<CoachScreen> {
         Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: _draft.convocati.map((num) {
-            final p = app.player(num);
-            final on = _draft.captain == num;
+          children: _draft.convocati.map((n) {
+            final p = app.player(n);
+            final on = _draft.captain == n;
             return ChoiceChip(
-              label: Text('Ⓒ #$num ${p?.name ?? ''}'),
+              label: Text('Ⓒ #$n ${p?.name ?? ''}'),
               selected: on,
               onSelected: (_) => setState(() => _draft = Lineup(
                   convocati: _draft.convocati,
                   starters: _draft.starters,
-                  captain: on ? null : num)),
+                  captain: on ? null : n)),
             );
           }).toList(),
         ),

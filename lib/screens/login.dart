@@ -70,7 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               width: 90,
                               height: 90,
                               fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => const Icon(
+                              errorBuilder: (_, _, _) => const Icon(
                                   Icons.sports_basketball,
                                   size: 90,
                                   color: PgsColors.orange)),

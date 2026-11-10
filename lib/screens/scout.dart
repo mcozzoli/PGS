@@ -260,12 +260,13 @@ class _ScoutScreenState extends State<ScoutScreen> {
       ),
     );
     if (ok != true) return;
+    if (!mounted) return;
+    final app = context.read<AppState>();
     _commit();
     st!['status'] = 'final';
     st!['running'] = false;
     st!['runStart'] = null;
     await _save();
-    final app = context.read<AppState>();
     await app.refreshStats();
     await app.refreshLive();
     if (mounted) {
