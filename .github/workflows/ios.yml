@@ -28,6 +28,12 @@ jobs:
       - name: Pre-build iOS (senza firma)
         run: flutter build ios --release --no-codesign
 
+      - name: Inietta target nativi (widget / watch)
+        working-directory: ios
+        run: |
+          gem install xcodeproj --no-document
+          ruby tools/add_targets.rb
+
       - name: Scrivi la API key .p8 su file
         run: |
           echo "$ASC_KEY_P8" | base64 --decode > "$RUNNER_TEMP/AuthKey.p8"
