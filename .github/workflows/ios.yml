@@ -1,0 +1,40 @@
+name: iOS TestFlight
+
+on:
+  push:
+    tags: ['v*']          # un tag v1.0.0 fa partire la release iOS
+  workflow_dispatch:       # oppure avvio manuale
+
+jobs:
+  testflight:
+    runs-on: macos-14
+    env:
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8: ${{ secrets.ASC_KEY_P8 }}
+      APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.47.9'
+          channel: stable
+          cache: true
+
+      - name: Dipendenze
+        run: flutter pub get
+
+      - name: Pre-build iOS (senza firma)
+        run: flutter build ios --release --no-codesign
+
+      - name: Scrivi la API key .p8 su file
+        run: |
+          echo "$ASC_KEY_P8" | base64 --decode > "$RUNNER_TEMP/AuthKey.p8"
+          echo "ASC_KEY_PATH=$RUNNER_TEMP/AuthKey.p8" >> "$GITHUB_ENV"
+
+      - name: Fastlane beta (archivia + TestFlight)
+        working-directory: ios
+        run: |
+          gem install bundler >/dev/null || true
+          fastlane beta

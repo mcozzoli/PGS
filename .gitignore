@@ -1,0 +1,55 @@
+# === Segreti: MAI versionare ===
+appkey/
+*.p8
+*.p12
+*.mobileprovision
+*.cer
+*.keystore
+*.jks
+key.properties
+ios/fastlane/report.xml
+**/*.env
+.env
+
+# === Flutter / Dart ===
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+flutter_*.png
+linked_*.ds
+unlinked.ds
+unlinked_spec.ds
+*.iml
+.idea/
+.vscode/
+
+# === Android ===
+android/.gradle/
+android/app/debug
+android/app/profile
+android/app/release
+android/local.properties
+android/key.properties
+*.class
+*.log
+
+# === iOS / macOS ===
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/ephemeral/
+ios/Flutter/app.flx
+ios/Flutter/flutter_export_environment.sh
+.DS_Store
+ios/ServiceDefinitions.json
+ios/Runner/GeneratedPluginRegistrant.*
+
+# === Vari ===
+*.swp
+.atom/
+.buildlog/
