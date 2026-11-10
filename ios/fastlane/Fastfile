@@ -5,8 +5,6 @@ APP_NAME = "PGS Salgen"
 
 platform :ios do
   # Autenticazione tramite App Store Connect API key (nessuna password/2FA).
-  # L'azione imposta la chiave anche nel contesto globale (Spaceship),
-  # così produce/cert/sigh/pilot la usano senza passare parametri extra.
   def asc_key
     app_store_connect_api_key(
       key_id: ENV.fetch("ASC_KEY_ID"),
@@ -17,12 +15,11 @@ platform :ios do
     )
   end
 
-  desc "Build e upload su TestFlight (firma manuale via API key)"
+  desc "Build e upload su TestFlight (cloud signing via API key)"
   lane :beta do
     api = asc_key
-    setup_ci # keychain temporaneo per la CI
 
-    # 1) Registra App ID + app su App Store Connect (idempotente)
+    # Registra App ID + app su App Store Connect (idempotente)
     begin
       produce(
         app_identifier: APP_ID,
@@ -34,34 +31,7 @@ platform :ios do
       UI.message("produce: #{e.message} (l'app probabilmente esiste già)")
     end
 
-    # 2) Certificato di distribuzione (Apple Distribution) nel keychain CI
-    cert(
-      api_key: api,
-      generate_apple_certs: true,
-      team_id: ENV.fetch("APPLE_TEAM_ID")
-    )
-
-    # 3) Provisioning profile App Store per il bundle id
-    sigh(
-      api_key: api,
-      app_identifier: APP_ID,
-      platform: "ios",
-      force: true
-    )
-    profile_name = lane_context[SharedValues::SIGH_NAME]
-
-    # 4) Firma manuale nel progetto Xcode
-    update_code_signing_settings(
-      use_automatic_signing: false,
-      path: "Runner.xcodeproj",
-      team_id: ENV.fetch("APPLE_TEAM_ID"),
-      code_sign_identity: "Apple Distribution",
-      profile_name: profile_name,
-      bundle_identifier: APP_ID,
-      targets: ["Runner"]
-    )
-
-    # 5) Archivio e IPA
+    # Archivio + IPA con firma gestita da Apple (crea cert/profilo in cloud).
     build_app(
       workspace: "Runner.xcworkspace",
       scheme: "Runner",
@@ -69,14 +39,19 @@ platform :ios do
       export_method: "app-store",
       output_directory: "build",
       output_name: "PGS.ipa",
+      xcargs: [
+        "-allowProvisioningUpdates",
+        "-authenticationKeyID #{ENV.fetch('ASC_KEY_ID')}",
+        "-authenticationKeyIssuerID #{ENV.fetch('ASC_ISSUER_ID')}",
+        "-authenticationKeyPath #{ENV.fetch('ASC_KEY_PATH')}",
+        "DEVELOPMENT_TEAM=#{ENV.fetch('APPLE_TEAM_ID')}"
+      ].join(" "),
       export_options: {
-        signingStyle: "manual",
-        teamID: ENV.fetch("APPLE_TEAM_ID"),
-        provisioningProfiles: { APP_ID => profile_name }
+        signingStyle: "automatic",
+        teamID: ENV.fetch("APPLE_TEAM_ID")
       }
     )
 
-    # 6) Upload su TestFlight
     upload_to_testflight(
       api_key: api,
       skip_waiting_for_build_processing: true
