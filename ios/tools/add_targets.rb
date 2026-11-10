@@ -74,7 +74,61 @@ def ensure_widget(project, runner, name_ver, number_ver, team)
   runner.build_phases.insert(idx, phase)
 end
 
+def reorder_before_pods(runner, phase)
+  runner.build_phases.delete(phase)
+  idx = runner.build_phases.index do |p|
+    p.respond_to?(:display_name) &&
+      (p.display_name =~ /Embed Pods Frameworks/ || p.display_name =~ /Thin Binary/)
+  end
+  idx ||= runner.build_phases.length
+  runner.build_phases.insert(idx, phase)
+end
+
+def ensure_watch(project, runner, name_ver, number_ver, team)
+  tname = 'PGSWatch'
+  if project.targets.any? { |t| t.name == tname }
+    puts "[add_targets] #{tname} già presente, salto"
+    return
+  end
+  puts "[add_targets] creo target #{tname} (watchOS)"
+  watch = project.new_target(:application, tname, :watchos, '9.0')
+
+  group = project.main_group.find_subpath(tname, true)
+  group.set_source_tree('SOURCE_ROOT')
+  swift = group.new_reference("#{tname}/#{tname}App.swift")
+  watch.add_file_references([swift])
+
+  watch.build_configurations.each do |c|
+    s = c.build_settings
+    s['PRODUCT_BUNDLE_IDENTIFIER'] = 'it.pgssalgen.pgs.watchkitapp'
+    s['INFOPLIST_FILE'] = "#{tname}/Info.plist"
+    s['SDKROOT'] = 'watchos'
+    s['SWIFT_VERSION'] = '5.0'
+    s['WATCHOS_DEPLOYMENT_TARGET'] = '9.0'
+    s['TARGETED_DEVICE_FAMILY'] = '4'
+    s['MARKETING_VERSION'] = name_ver
+    s['CURRENT_PROJECT_VERSION'] = number_ver
+    s['DEVELOPMENT_TEAM'] = team
+    s['CODE_SIGN_STYLE'] = 'Automatic'
+    s['GENERATE_INFOPLIST_FILE'] = 'NO'
+    s['PRODUCT_NAME'] = '$(TARGET_NAME)'
+    s['SKIP_INSTALL'] = 'YES'
+    s['ASSETCATALOG_COMPILER_GENERATE_ASSET_SYMBOLS'] = 'NO'
+    s['SUPPORTS_MACCATALYST'] = 'NO'
+  end
+
+  runner.add_dependency(watch)
+  phase = runner.copy_files_build_phases.find { |p| p.name == 'Embed Watch Content' }
+  phase ||= runner.new_copy_files_build_phase('Embed Watch Content')
+  phase.symbol_dst_subfolder_spec = :products_directory
+  phase.dst_path = '$(CONTENTS_FOLDER_PATH)/Watch'
+  bf = phase.add_file_reference(watch.product_reference, true)
+  bf.settings = { 'ATTRIBUTES' => ['RemoveHeadersOnCopy'] }
+  reorder_before_pods(runner, phase)
+end
+
 ensure_widget(project, runner, name, number, TEAM)
+ensure_watch(project, runner, name, number, TEAM)
 
 project.save
 puts "[add_targets] fatto. Target: #{project.targets.map(&:name).join(', ')}"
