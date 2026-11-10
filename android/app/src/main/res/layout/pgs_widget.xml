@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/w_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_bg"
+    android:padding="14dp">
+
+    <TextView
+        android:id="@+id/w_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#FFB459"
+        android:textStyle="bold"
+        android:textSize="11sp"
+        android:letterSpacing="0.05"
+        android:text="🏀 Prossima" />
+
+    <TextView
+        android:id="@+id/w_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:text="GIO 12 NOV" />
+
+    <TextView
+        android:id="@+id/w_match"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="#FFFFFF"
+        android:textSize="14sp"
+        android:text="PGS Salgen · Guidonia" />
+
+    <TextView
+        android:id="@+id/w_meta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textColor="#CFD8F5"
+        android:textSize="12sp"
+        android:text="ore 20:45 · Casa" />
+
+    <TextView
+        android:id="@+id/w_extra"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:textColor="#FFB459"
+        android:textStyle="bold"
+        android:textSize="12sp"
+        android:text="" />
+
+</LinearLayout>

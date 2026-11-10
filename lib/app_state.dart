@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'api.dart';
 import 'models.dart';
+import 'widgets_bridge.dart';
 
 /// Stato globale dell'app (equivalente dell'oggetto `S` del portale).
 class AppState extends ChangeNotifier {
@@ -125,6 +126,7 @@ class AppState extends ChangeNotifier {
       stats = {};
     }
     await refreshLive();
+    syncHomeWidget(this);
   }
 
   Future<void> refreshStats() async {
