@@ -1,7 +1,7 @@
 name: pgs
 description: "PGS Salgen Roma — app ufficiale della squadra (client mobile del portale basketsalgen)."
 publish_to: 'none'
-version: 1.0.0+3
+version: 1.0.0+4
 
 environment:
   sdk: ^3.13.7

@@ -62,6 +62,16 @@ def ensure_widget(project, runner, name_ver, number_ver, team)
   phase.symbol_dst_subfolder_spec = :plug_ins
   bf = phase.add_file_reference(ext.product_reference, true)
   bf.settings = { 'ATTRIBUTES' => ['RemoveHeadersOnCopy'] }
+
+  # Evita "Cycle inside Runner": l'embed dell'estensione deve stare PRIMA
+  # delle fasi script di CocoaPods/Flutter (Embed Pods Frameworks, Thin Binary).
+  runner.build_phases.delete(phase)
+  idx = runner.build_phases.index do |p|
+    p.respond_to?(:display_name) &&
+      (p.display_name =~ /Embed Pods Frameworks/ || p.display_name =~ /Thin Binary/)
+  end
+  idx ||= runner.build_phases.length
+  runner.build_phases.insert(idx, phase)
 end
 
 ensure_widget(project, runner, name, number, TEAM)
